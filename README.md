@@ -1,7 +1,7 @@
 # LitterBox
 A wee Haskell app to provide a local sandbox a bit like ShaderToy
 
-Launch it with ./LitterBox -d <dirname>
+Launch it with ./LitterBox -d <\dirname\>
   
 If you omit <dirname> it assumes the current directory
   
