@@ -116,8 +116,10 @@ bool intersectScene(out float near, out vec3 normal, vec4 cube[6], vec3 p, vec3 
 
     mat4 m = translate(vec3(0.6, 0.4, 0.0));
     mat4 im = invTranslate(vec3(0.6, 0.4, 0.0));
-    m = m*rotateX(0.2*iTime);
-    im = invRotateX(0.2*iTime)*im;
+    m = m*rotateY(0.1*iTime);
+    im = invRotateY(0.1*iTime)*im;
+    m = m*rotateX(0.4*iTime);
+    im = invRotateX(0.4*iTime)*im;
     m = m*scale(0.5);
     im = invScale(0.5)*im;
     vec3 new_p = (im*vec4(p, 1.0)).xyz;
@@ -152,8 +154,10 @@ bool intersectScene(out float near, out vec3 normal, vec4 cube[6], vec3 p, vec3 
 
     m = translate(vec3(-0.6, 0.4, 0.0));
     im = invTranslate(vec3(-0.6, 0.4, 0.0));
-    m = m*rotateY(0.2*iTime);
-    im = invRotateY(0.2*iTime)*im;
+    m = m*rotateX(0.2*iTime);
+    im = invRotateX(0.2*iTime)*im;
+    m = m*rotateY(-0.3*iTime);
+    im = invRotateY(-0.3*iTime)*im;
     m = m*scale(0.5);
     im = invScale(0.5)*im;
     new_p = (im*vec4(p, 1.0)).xyz;
@@ -170,7 +174,7 @@ bool intersectScene(out float near, out vec3 normal, vec4 cube[6], vec3 p, vec3 
     im = invTranslate(vec3(-0.6, -0.4, 0.0));
     m = m*rotateY(0.5*iTime);
     im = invRotateY(0.5*iTime)*im;
-    m = m*rotateX(0.3*iTime);
+    m = m*rotateX(0.6*iTime);
     im = invRotateX(0.6*iTime)*im;
     m = m*scale(0.5);
     im = invScale(0.5)*im;
