@@ -1,2 +1,2 @@
-LitterBox: LitterBox.hs
-	stack ghc -- -o LitterBox LitterBox.hs
+LitterBox: LitterBox.hs SDLCode.hs GLCode.hs
+	stack ghc -- --make -o LitterBox LitterBox.hs
