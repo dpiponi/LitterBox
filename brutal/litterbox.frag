@@ -191,7 +191,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec2 uv = fragCoord.xy-0.5*iResolution;
     uv = 2.0*uv/iResolution.y;
 
-    vec3 p = vec3(0.0, 0.0, -5.0);
+    vec3 p = vec3(0.0, 0.0, -4.0);
     vec3 d = vec3(0.5*uv, 1.0);
     float seed = uv.x+uv.y;
     seed = rand(seed)+uv.y-uv.x;
@@ -203,8 +203,8 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     if (intersectScene(near, normal, cube, p, d)) {
         p = p+near*d;
         vec3 color = vec3(0.0, 0.0, 0.0);
-        float gain = 1.0/float(64);
-        for (int i = 0; i < 64; ++i) {
+        float gain = 1.0/float(256);
+        for (int i = 0; i < 256; ++i) {
             vec3 secondary = pointOrthoToPlane(seed, normal);
             vec3 new_p = p+0.00001*secondary;
             vec3 ignore;
