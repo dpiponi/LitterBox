@@ -203,8 +203,8 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     if (intersectScene(near, normal, cube, p, d)) {
         p = p+near*d;
         vec3 color = vec3(0.0, 0.0, 0.0);
-        float gain = 1.0/float(256);
-        for (int i = 0; i < 256; ++i) {
+        float gain = 1.0/float(64);
+        for (int i = 0; i < 64; ++i) {
             vec3 secondary = pointOrthoToPlane(seed, normal);
             vec3 new_p = p+0.00001*secondary;
             vec3 ignore;
