@@ -17,4 +17,4 @@ If the compiler complains it'll keep rendering using the previously working shad
 
 
 ![Example image](https://raw.githubusercontent.com/dpiponi/LitterBox/master/Untitled.png)
-![Example image 2](https://raw.githubusercontent.com/dpiponi/LitterBox/master/Untitled2.png)
+![Example image 2](https://raw.githubusercontent.com/dpiponi/LitterBox/master/Untitled.png)
