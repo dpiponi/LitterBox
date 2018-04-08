@@ -31,6 +31,19 @@ mat4 invRotateX(float theta) {
     return rotateX(-theta);
 }
 
+void doRotateX(inout mat4 m, inout mat4 im, float theta) {
+    float c = cos(theta);
+    float s = sin(theta);
+    m = m*mat4(1.0, 0.0, 0.0, 0.0,
+                0.0, c, s, 0.0,
+                0.0, -s, c, 0.0,
+                0.0, 0.0, 0.0, 1.0);
+    im = mat4(1.0, 0.0, 0.0, 0.0,
+                0.0, c, -s, 0.0,
+                0.0, s, c, 0.0,
+                0.0, 0.0, 0.0, 1.0)*im;
+}
+
 mat4 rotateY(float theta) {
     float s = sin(theta);
     float c = cos(theta);
@@ -38,6 +51,19 @@ mat4 rotateY(float theta) {
                 0.0, 1.0, 0.0, 0.0,
                 s, 0.0, c, 0.0,
                 0.0, 0.0, 0.0, 1.0);
+}
+
+void doRotateY(inout mat4 m, inout mat4 im, float theta) {
+    float c = cos(theta);
+    float s = sin(theta);
+    m = m*mat4(c, 0.0, -s, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                s, 0.0, c, 0.0,
+                0.0, 0.0, 0.0, 1.0);
+    im = mat4(c, 0.0, s, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                -s, 0.0, c, 0.0,
+                0.0, 0.0, 0.0, 1.0)*im;
 }
 
 mat4 invRotateY(float theta) {
@@ -54,6 +80,17 @@ mat4 translate(vec3 p) {
 
 mat4 invTranslate(vec3 p) {
     return translate(-p);
+}
+
+void doTranslate(inout mat4 m, inout mat4 im, vec3 p) {
+    m = m*mat4(1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                p.x, p.y, p.z, 1.0);
+    im = mat4(1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                -p.x, -p.y, -p.z, 1.0)*im;
 }
 
 mat4 scale(float s) {
@@ -158,12 +195,13 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
     bool did = false;
     near = 1e8;
 
-    mat4 m = translate(vec3(0.6, 0.4, 0.0));
-    mat4 im = invTranslate(vec3(0.6, 0.4, 0.0));
-    m = m*rotateY(0.1*iTime);
-    im = invRotateY(0.1*iTime)*im;
-    m = m*rotateX(0.4*iTime);
-    im = invRotateX(0.4*iTime)*im;
+    mat4 m = mat4(1.0);
+    mat4 im = mat4(1.0);
+    doTranslate(m, im, vec3(0.6, 0.4, 0.0));
+    //m = m*rotateY(0.1*iTime);
+    //im = invRotateY(0.1*iTime)*im;
+    doRotateY(m, im, 0.1*iTime);
+    doRotateX(m, im, 0.4*iTime);
     m = m*scale(0.5);
     im = invScale(0.5)*im;
     vec3 new_p = (im*vec4(p, 1.0)).xyz;
@@ -178,13 +216,15 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
         }
     }
 
-    if (debug) {
-    m = translate(vec3(0.6, -0.4, 0.0));
-    im = invTranslate(vec3(0.6, -0.4, 0.0));
-    m = m*rotateY(0.3*iTime);
-    im = invRotateY(0.3*iTime)*im;
-    m = m*rotateX(0.3*iTime);
-    im = invRotateX(0.3*iTime)*im;
+    m = mat4(1.0);
+    im = mat4(1.0);
+    doTranslate(m, im, vec3(0.6, -0.4, 0.0));
+    //m = m*rotateY(0.3*iTime);
+    //im = invRotateY(0.3*iTime)*im;
+    doRotateY(m, im, 0.3*iTime);
+    //m = m*rotateX(0.3*iTime);
+    //im = invRotateX(0.3*iTime)*im;
+    doRotateX(m, im, 0.3*iTime);
     m = m*scale(0.5);
     im = invScale(0.5)*im;
     new_p = (im*vec4(p, 1.0)).xyz;
@@ -196,10 +236,12 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
             near = new_near;
         }
     }
-    }
 
-    m = translate(vec3(-0.6, 0.4, 0.0));
-    im = invTranslate(vec3(-0.6, 0.4, 0.0));
+    m = mat4(1.0);
+    im = mat4(1.0);
+    //m = translate(vec3(-0.6, 0.4, 0.0));
+    //im = invTranslate(vec3(-0.6, 0.4, 0.0));
+    doTranslate(m, im, vec3(-0.6, 0.4, 0.0));
     m = m*rotateX(0.2*iTime);
     im = invRotateX(0.2*iTime)*im;
     m = m*rotateY(-0.3*iTime);
@@ -216,12 +258,17 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
         }
     }
 
-    m = translate(vec3(-0.6, -0.4, 0.0));
-    im = invTranslate(vec3(-0.6, -0.4, 0.0));
-    m = m*rotateY(0.5*iTime);
-    im = invRotateY(0.5*iTime)*im;
-    m = m*rotateX(0.6*iTime);
-    im = invRotateX(0.6*iTime)*im;
+    m = mat4(1.0);
+    im = mat4(1.0);
+    //m = translate(vec3(-0.6, -0.4, 0.0));
+    //im = invTranslate(vec3(-0.6, -0.4, 0.0));
+    doTranslate(m, im, vec3(-0.6, -0.4, 0.0));
+    //m = m*rotateY(0.5*iTime);
+    //im = invRotateY(0.5*iTime)*im;
+    doRotateY(m, im, 0.5*iTime);
+    //m = m*rotateX(0.6*iTime);
+    //im = invRotateX(0.6*iTime)*im;
+    doRotateX(m, im, 0.6*iTime);
     m = m*scale(0.5);
     im = invScale(0.5)*im;
     new_p = (im*vec4(p, 1.0)).xyz;
