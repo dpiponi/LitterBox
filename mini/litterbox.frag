@@ -230,36 +230,51 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec2 uv = fragCoord.xy-0.5*iResolution;
     uv = 2.0*uv/iResolution.y;
 
-    vec3 p = vec3(0.0, 0.0, -4.0+1.5*sin(0.2*iTime));
-    vec3 d = vec3(0.5*uv, 1.0);
     float seed = uv.x+uv.y;
     seed = rand(seed)+uv.y-uv.x;
     seed = rand(seed)+iTime;
     seed = rand(seed);
+    float focus = 0.0;
+    float lens = -3.0;
+    float aperture = 0.1;
 
-    vec3 normal;
-    float near;
-    if (intersectScene(near, normal, p, d, true)) {
-        p = p+near*d;
-        vec3 color = vec3(0.0, 0.0, 0.0);
-        float gain = 1.0/float(64);
-        normal = normalize(normal);
-        for (int i = 0; i < 64; ++i) {
-            vec3 secondary = vectorOutOfPlane(seed, normal);
-            //secondary = normal;
-            vec3 new_p = p+0.0001*secondary;
-            vec3 ignore;
-            float ignore2;
-            bool did = intersectScene(ignore2, ignore, new_p, secondary, true);
-            if (did) {
-                color += vec3(0.0, 0.0, 0.0);
-            } else {
-                color += vec3(0.8, 0.8, 0.8);
+    int count = 0;
+    vec3 color = vec3(0.0, 0.0, 0.0);
+    for (int k = 0; k < 256; ++k) {
+
+        vec3 p = vec3(0.0, 0.0, -4.0);//+1.5*sin(0.2*iTime));
+        vec3 d = vec3(0.5*uv, 1.0);
+        float lambda_focus = (focus-p.z)/d.z;
+        float lambda_lens = (lens-p.z)/d.z;
+
+        vec3 new_p = p+lambda_lens*d+vec3(aperture*rand(seed)-0.5*aperture, aperture*rand(seed)-0.5*aperture, 0.0);;
+        vec3 new_d = p+lambda_focus*d-new_p;
+
+        p = new_p;
+        d = new_d;
+
+        vec3 normal;
+        float near;
+        if (intersectScene(near, normal, p, d, true)) {
+            p = p+near*d;
+            normal = normalize(normal);
+            for (int i = 0; i < 1; ++i) {
+                vec3 secondary = vectorOutOfPlane(seed, normal);
+                //secondary = normal;
+                vec3 new_p = p+0.0001*secondary;
+                vec3 ignore;
+                float ignore2;
+                bool did = intersectScene(ignore2, ignore, new_p, secondary, true);
+                if (!did) {
+                    color += vec3(0.8, 0.8, 0.8);
+                }
             }
+            //fragColor = vec4(normal, 1.0);
+        } else {
+            color += vec3(0.1, 0.1, 0.1);
         }
-        fragColor = vec4(gain*color, 1.0);
-        //fragColor = vec4(normal, 1.0);
-    } else {
-        fragColor = vec4(0.1, 0.1, 0.1, 1.0);
+        ++count;
     }
+    float gain = 1.0/float(count);
+    fragColor = vec4(gain*color, 1.0);
 }
