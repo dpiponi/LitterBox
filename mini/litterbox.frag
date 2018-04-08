@@ -157,16 +157,77 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
     bool did = false;
     near = 1e8;
 
-    mat4 m = mat4(1.0);
-    mat4 im = mat4(1.0);
-    doTranslate(m, im, vec3(0.6, 0.4, 0.0));
-    doRotateY(m, im, 0.1*iTime);
-    doRotateX(m, im, 0.1*iTime);
-    doScale(m, im, 0.5, 1.5, 0.05);
-    vec3 new_p = (im*vec4(p, 1.0)).xyz;
-    vec3 new_d = (im*vec4(d, 0.0)).xyz;
+    mat4 m, im;
+
+//    m = mat4(1.0);
+//    im = mat4(1.0);
+//    doTranslate(m, im, vec3(0.6, -0.4, 0.0));
+//    doRotateY(m, im, 0.3*iTime);
+//    doRotateX(m, im, 0.3*iTime);
+//    doScale(m, im, 0.5, 0.5, 0.5);
+//    new_p = (im*vec4(p, 1.0)).xyz;
+//    new_d = (im*vec4(d, 0.0)).xyz;
+//    if (intersectSphere(new_near, new_normal, new_p, new_d)) {
+//        did = true;
+//        if (new_near < near) {
+//            normal = (m*vec4(new_normal, 0.0)).xyz;
+//            near = new_near;
+//        }
+//    }
+
+    vec3 new_d, new_p, new_normal;
     float new_near;
-    vec3 new_normal;
+//    m = mat4(1.0);
+//    im = mat4(1.0);
+//    doTranslate(m, im, vec3(-0.6, 0.4, 0.0));
+//    doRotateX(m, im, 0.2*iTime);
+//    doRotateY(m, im, -0.3*iTime);
+//    doScale(m, im, 0.25, 0.25, 1.5);
+//    vec3 new_p = (im*vec4(p, 1.0)).xyz;
+//    vec3 new_d = (im*vec4(d, 0.0)).xyz;
+//    float new_near;
+//    vec3 new_normal;
+//    if (intersectCylinder(new_near, new_normal, new_p, new_d)) {
+//        did = true;
+//        if (new_near < near) {
+//            normal = (m*vec4(new_normal, 0.0)).xyz;
+//            near = new_near;
+//        }
+//    }
+
+//    m = mat4(1.0);
+//    im = mat4(1.0);
+//    doTranslate(m, im, vec3(-0.6, -0.4, 0.0));
+//    doRotateY(m, im, 0.5*iTime);
+//    doRotateX(m, im, 0.6*iTime);
+//    doScale(m, im, 0.5, 0.5, 0.5);
+//    new_p = (im*vec4(p, 1.0)).xyz;
+//    new_d = (im*vec4(d, 0.0)).xyz;
+//    if (intersectCube(new_near, new_normal, new_p, new_d)) {
+//        did = true;
+//        if (new_near < near) {
+//            normal = (m*vec4(new_normal, 0.0)).xyz;
+//            near = new_near;
+//        }
+//    }
+
+    // Cam 1
+    m = mat4(1.0);
+    im = mat4(1.0);
+
+    doRotateY(m, im, 0.5);//0.2*iTime);
+    // Axle position
+    doTranslate(m, im, vec3(0.0, -0.6, 0.0));
+    // Axle rotation
+    doRotateX(m, im, 1.0*iTime);
+    // Cam offset
+    doTranslate(m, im, vec3(0.0, 0.1, 0.0));
+    doRotateY(m, im, 0.5*pi);
+    // Cam position along axle
+    doTranslate(m, im, vec3(0.0, 0.0, 0.6));
+    doScale(m, im, 0.15, 0.2, 0.02);
+    new_p = (im*vec4(p, 1.0)).xyz;
+    new_d = (im*vec4(d, 0.0)).xyz;
     if (intersectCylinder(new_near, new_normal, new_p, new_d)) {
         did = true;
         if (new_near < near) {
@@ -175,28 +236,22 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
         }
     }
 
+    // Cam 2
     m = mat4(1.0);
     im = mat4(1.0);
-    doTranslate(m, im, vec3(0.6, -0.4, 0.0));
-    doRotateY(m, im, 0.3*iTime);
-    doRotateX(m, im, 0.3*iTime);
-    doScale(m, im, 0.5, 0.5, 0.5);
-    new_p = (im*vec4(p, 1.0)).xyz;
-    new_d = (im*vec4(d, 0.0)).xyz;
-    if (intersectSphere(new_near, new_normal, new_p, new_d)) {
-        did = true;
-        if (new_near < near) {
-            normal = (m*vec4(new_normal, 0.0)).xyz;
-            near = new_near;
-        }
-    }
 
-    m = mat4(1.0);
-    im = mat4(1.0);
-    doTranslate(m, im, vec3(-0.6, 0.4, 0.0));
-    doRotateX(m, im, 0.2*iTime);
-    doRotateY(m, im, -0.3*iTime);
-    doScale(m, im, 0.25, 0.25, 1.5);
+    doRotateY(m, im, 0.5);//0.2*iTime);
+    // Axle position
+    doTranslate(m, im, vec3(0.0, -0.6, 0.0));
+    // Axle rotation
+    doRotateX(m, im, 1.0*iTime);
+    doRotateX(m, im, pi);
+    // Cam offset
+    doTranslate(m, im, vec3(0.0, 0.1, 0.0));
+    doRotateY(m, im, 0.5*pi);
+    // Cam position along axle
+    doTranslate(m, im, vec3(0.0, 0.0, -0.6));
+    doScale(m, im, 0.15, 0.2, 0.02);
     new_p = (im*vec4(p, 1.0)).xyz;
     new_d = (im*vec4(d, 0.0)).xyz;
     if (intersectCylinder(new_near, new_normal, new_p, new_d)) {
@@ -207,15 +262,60 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
         }
     }
 
+    // Piston 1
     m = mat4(1.0);
     im = mat4(1.0);
-    doTranslate(m, im, vec3(-0.6, -0.4, 0.0));
-    doRotateY(m, im, 0.5*iTime);
-    doRotateX(m, im, 0.6*iTime);
-    doScale(m, im, 0.5, 0.5, 0.5);
+
+    doRotateY(m, im, 0.5);//0.2*iTime);
+    // Axle position
+    doTranslate(m, im, vec3(0.0, -0.6, 0.0));
+    // Cam position along axle
+    doTranslate(m, im, vec3(0.6, 0.10+0.21*0.5*(1.0+sin(1.0*iTime+0.5*pi)), 0.0));
+    doRotateX(m, im, 0.5*pi);
+    doScale(m, im, 0.1, 0.1, 0.02);
     new_p = (im*vec4(p, 1.0)).xyz;
     new_d = (im*vec4(d, 0.0)).xyz;
-    if (intersectCube(new_near, new_normal, new_p, new_d)) {
+    if (intersectCylinder(new_near, new_normal, new_p, new_d)) {
+        did = true;
+        if (new_near < near) {
+            normal = (m*vec4(new_normal, 0.0)).xyz;
+            near = new_near;
+        }
+    }
+
+    // Piston 2
+    m = mat4(1.0);
+    im = mat4(1.0);
+
+    doRotateY(m, im, 0.5);//0.2*iTime);
+    // Axle position
+    doTranslate(m, im, vec3(0.0, -0.6, 0.0));
+    // Cam position along axle
+    doTranslate(m, im, vec3(-0.6, 0.10+0.21*0.5*(1.0+sin(1.0*iTime-0.5*pi)), 0.0));
+    doRotateX(m, im, 0.5*pi);
+    doScale(m, im, 0.1, 0.1, 0.02);
+    new_p = (im*vec4(p, 1.0)).xyz;
+    new_d = (im*vec4(d, 0.0)).xyz;
+    if (intersectCylinder(new_near, new_normal, new_p, new_d)) {
+        did = true;
+        if (new_near < near) {
+            normal = (m*vec4(new_normal, 0.0)).xyz;
+            near = new_near;
+        }
+    }
+
+    // Axle
+    m = mat4(1.0);
+    im = mat4(1.0);
+
+    doRotateY(m, im, 0.5);//0.2*iTime);
+    doTranslate(m, im, vec3(0.0, 0.0, 0.0));
+    doTranslate(m, im, vec3(0.0, -0.6, 0.0));
+    doRotateY(m, im, 0.5*pi);
+    doScale(m, im, 0.05, 0.05, 1.0);
+    new_p = (im*vec4(p, 1.0)).xyz;
+    new_d = (im*vec4(d, 0.0)).xyz;
+    if (intersectCylinder(new_near, new_normal, new_p, new_d)) {
         did = true;
         if (new_near < near) {
             normal = (m*vec4(new_normal, 0.0)).xyz;
@@ -236,13 +336,13 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     seed = rand(seed);
     float focus = 0.0;
     float lens = -3.0;
-    float aperture = 0.1;
+    float aperture = 0.05;
 
     int count = 0;
     vec3 color = vec3(0.0, 0.0, 0.0);
     for (int k = 0; k < 256; ++k) {
 
-        vec3 p = vec3(0.0, 0.0, -4.0);//+1.5*sin(0.2*iTime));
+        vec3 p = vec3(0.0, 0.0, -3.0);//+1.5*sin(0.2*iTime));
         vec3 d = vec3(0.5*uv, 1.0);
         float lambda_focus = (focus-p.z)/d.z;
         float lambda_lens = (lens-p.z)/d.z;
@@ -267,6 +367,8 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
                 bool did = intersectScene(ignore2, ignore, new_p, secondary, true);
                 if (!did) {
                     color += vec3(0.8, 0.8, 0.8);
+                } else {
+                    color += vec3(0.2, 0.2, 0.2);
                 }
             }
             //fragColor = vec4(normal, 1.0);
