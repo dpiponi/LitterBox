@@ -198,8 +198,6 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
     mat4 m = mat4(1.0);
     mat4 im = mat4(1.0);
     doTranslate(m, im, vec3(0.6, 0.4, 0.0));
-    //m = m*rotateY(0.1*iTime);
-    //im = invRotateY(0.1*iTime)*im;
     doRotateY(m, im, 0.1*iTime);
     doRotateX(m, im, 0.4*iTime);
     m = m*scale(0.5);
@@ -219,11 +217,7 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
     m = mat4(1.0);
     im = mat4(1.0);
     doTranslate(m, im, vec3(0.6, -0.4, 0.0));
-    //m = m*rotateY(0.3*iTime);
-    //im = invRotateY(0.3*iTime)*im;
     doRotateY(m, im, 0.3*iTime);
-    //m = m*rotateX(0.3*iTime);
-    //im = invRotateX(0.3*iTime)*im;
     doRotateX(m, im, 0.3*iTime);
     m = m*scale(0.5);
     im = invScale(0.5)*im;
@@ -239,8 +233,6 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
 
     m = mat4(1.0);
     im = mat4(1.0);
-    //m = translate(vec3(-0.6, 0.4, 0.0));
-    //im = invTranslate(vec3(-0.6, 0.4, 0.0));
     doTranslate(m, im, vec3(-0.6, 0.4, 0.0));
     m = m*rotateX(0.2*iTime);
     im = invRotateX(0.2*iTime)*im;
@@ -260,14 +252,8 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
 
     m = mat4(1.0);
     im = mat4(1.0);
-    //m = translate(vec3(-0.6, -0.4, 0.0));
-    //im = invTranslate(vec3(-0.6, -0.4, 0.0));
     doTranslate(m, im, vec3(-0.6, -0.4, 0.0));
-    //m = m*rotateY(0.5*iTime);
-    //im = invRotateY(0.5*iTime)*im;
     doRotateY(m, im, 0.5*iTime);
-    //m = m*rotateX(0.6*iTime);
-    //im = invRotateX(0.6*iTime)*im;
     doRotateX(m, im, 0.6*iTime);
     m = m*scale(0.5);
     im = invScale(0.5)*im;
