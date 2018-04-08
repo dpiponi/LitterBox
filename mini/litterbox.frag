@@ -18,19 +18,6 @@ vec3 vectorOutOfPlane(inout float seed, vec3 n) {
     return dot(n, d) < 0.0 ? -d : d;
 }
 
-mat4 rotateX(float theta) {
-    float s = sin(theta);
-    float c = cos(theta);
-    return mat4(1.0, 0.0, 0.0, 0.0,
-                0.0, c, s, 0.0,
-                0.0, -s, c, 0.0,
-                0.0, 0.0, 0.0, 1.0);
-}
-
-mat4 invRotateX(float theta) {
-    return rotateX(-theta);
-}
-
 void doRotateX(inout mat4 m, inout mat4 im, float theta) {
     float c = cos(theta);
     float s = sin(theta);
@@ -42,15 +29,6 @@ void doRotateX(inout mat4 m, inout mat4 im, float theta) {
                 0.0, c, -s, 0.0,
                 0.0, s, c, 0.0,
                 0.0, 0.0, 0.0, 1.0)*im;
-}
-
-mat4 rotateY(float theta) {
-    float s = sin(theta);
-    float c = cos(theta);
-    return mat4(c, 0.0, -s, 0.0,
-                0.0, 1.0, 0.0, 0.0,
-                s, 0.0, c, 0.0,
-                0.0, 0.0, 0.0, 1.0);
 }
 
 void doRotateY(inout mat4 m, inout mat4 im, float theta) {
@@ -66,22 +44,6 @@ void doRotateY(inout mat4 m, inout mat4 im, float theta) {
                 0.0, 0.0, 0.0, 1.0)*im;
 }
 
-mat4 invRotateY(float theta) {
-    return rotateY(-theta);
-}
-
-mat4 translate(vec3 p) {
-    return mat4(1.0, 0.0, 0.0, 0.0,
-                0.0, 1.0, 0.0, 0.0,
-                0.0, 0.0, 1.0, 0.0,
-                p.x, p.y, p.z, 1.0);
-}
-
-
-mat4 invTranslate(vec3 p) {
-    return translate(-p);
-}
-
 void doTranslate(inout mat4 m, inout mat4 im, vec3 p) {
     m = m*mat4(1.0, 0.0, 0.0, 0.0,
                 0.0, 1.0, 0.0, 0.0,
@@ -93,15 +55,15 @@ void doTranslate(inout mat4 m, inout mat4 im, vec3 p) {
                 -p.x, -p.y, -p.z, 1.0)*im;
 }
 
-mat4 scale(float s) {
-    return mat4(s, 0.0, 0.0, 0.0,
-                0.0, s, 0.0, 0.0,
-                0.0, 0.0, s, 0.0,
+void doScale(inout mat4 m, inout mat4 im, float sx, float sy, float sz) {
+    m = m*mat4(sx, 0.0, 0.0, 0.0,
+                0.0, sy, 0.0, 0.0,
+                0.0, 0.0, sz, 0.0,
                 0.0, 0.0, 0.0, 1.0);
-}
-
-mat4 invScale(float s) {
-    return scale(1.0/s);
+    im = mat4(1.0/sx, 0.0, 0.0, 0.0,
+                0.0, 1.0/sy, 0.0, 0.0,
+                0.0, 0.0, 1.0/sz, 0.0,
+                0.0, 0.0, 0.0, 1.0)*im;
 }
 
 bool inner(inout vec3 normal, vec4 n, inout float near, inout float far, vec3 p, vec3 d) {
@@ -199,9 +161,8 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
     mat4 im = mat4(1.0);
     doTranslate(m, im, vec3(0.6, 0.4, 0.0));
     doRotateY(m, im, 0.1*iTime);
-    doRotateX(m, im, 0.4*iTime);
-    m = m*scale(0.5);
-    im = invScale(0.5)*im;
+    doRotateX(m, im, 0.1*iTime);
+    doScale(m, im, 0.5, 1.5, 0.05);
     vec3 new_p = (im*vec4(p, 1.0)).xyz;
     vec3 new_d = (im*vec4(d, 0.0)).xyz;
     float new_near;
@@ -219,8 +180,7 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
     doTranslate(m, im, vec3(0.6, -0.4, 0.0));
     doRotateY(m, im, 0.3*iTime);
     doRotateX(m, im, 0.3*iTime);
-    m = m*scale(0.5);
-    im = invScale(0.5)*im;
+    doScale(m, im, 0.5, 0.5, 0.5);
     new_p = (im*vec4(p, 1.0)).xyz;
     new_d = (im*vec4(d, 0.0)).xyz;
     if (intersectSphere(new_near, new_normal, new_p, new_d)) {
@@ -234,15 +194,12 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
     m = mat4(1.0);
     im = mat4(1.0);
     doTranslate(m, im, vec3(-0.6, 0.4, 0.0));
-    m = m*rotateX(0.2*iTime);
-    im = invRotateX(0.2*iTime)*im;
-    m = m*rotateY(-0.3*iTime);
-    im = invRotateY(-0.3*iTime)*im;
-    m = m*scale(0.5);
-    im = invScale(0.5)*im;
+    doRotateX(m, im, 0.2*iTime);
+    doRotateY(m, im, -0.3*iTime);
+    doScale(m, im, 0.25, 0.25, 1.5);
     new_p = (im*vec4(p, 1.0)).xyz;
     new_d = (im*vec4(d, 0.0)).xyz;
-    if (intersectCube(new_near, new_normal, new_p, new_d)) {
+    if (intersectCylinder(new_near, new_normal, new_p, new_d)) {
         did = true;
         if (new_near < near) {
             normal = (m*vec4(new_normal, 0.0)).xyz;
@@ -255,8 +212,7 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
     doTranslate(m, im, vec3(-0.6, -0.4, 0.0));
     doRotateY(m, im, 0.5*iTime);
     doRotateX(m, im, 0.6*iTime);
-    m = m*scale(0.5);
-    im = invScale(0.5)*im;
+    doScale(m, im, 0.5, 0.5, 0.5);
     new_p = (im*vec4(p, 1.0)).xyz;
     new_d = (im*vec4(d, 0.0)).xyz;
     if (intersectCube(new_near, new_normal, new_p, new_d)) {
