@@ -153,68 +153,7 @@ bool intersectSphere(out float near, out vec3 normal, vec3 p, vec3 d) {
     return false;
 }
 
-bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug) {
-    bool did = false;
-    near = 1e8;
-
-    mat4 m, im;
-
-//    m = mat4(1.0);
-//    im = mat4(1.0);
-//    doTranslate(m, im, vec3(0.6, -0.4, 0.0));
-//    doRotateY(m, im, 0.3*iTime);
-//    doRotateX(m, im, 0.3*iTime);
-//    doScale(m, im, 0.5, 0.5, 0.5);
-//    new_p = (im*vec4(p, 1.0)).xyz;
-//    new_d = (im*vec4(d, 0.0)).xyz;
-//    if (intersectSphere(new_near, new_normal, new_p, new_d)) {
-//        did = true;
-//        if (new_near < near) {
-//            normal = (m*vec4(new_normal, 0.0)).xyz;
-//            near = new_near;
-//        }
-//    }
-
-    vec3 new_d, new_p, new_normal;
-    float new_near;
-//    m = mat4(1.0);
-//    im = mat4(1.0);
-//    doTranslate(m, im, vec3(-0.6, 0.4, 0.0));
-//    doRotateX(m, im, 0.2*iTime);
-//    doRotateY(m, im, -0.3*iTime);
-//    doScale(m, im, 0.25, 0.25, 1.5);
-//    vec3 new_p = (im*vec4(p, 1.0)).xyz;
-//    vec3 new_d = (im*vec4(d, 0.0)).xyz;
-//    float new_near;
-//    vec3 new_normal;
-//    if (intersectCylinder(new_near, new_normal, new_p, new_d)) {
-//        did = true;
-//        if (new_near < near) {
-//            normal = (m*vec4(new_normal, 0.0)).xyz;
-//            near = new_near;
-//        }
-//    }
-
-//    m = mat4(1.0);
-//    im = mat4(1.0);
-//    doTranslate(m, im, vec3(-0.6, -0.4, 0.0));
-//    doRotateY(m, im, 0.5*iTime);
-//    doRotateX(m, im, 0.6*iTime);
-//    doScale(m, im, 0.5, 0.5, 0.5);
-//    new_p = (im*vec4(p, 1.0)).xyz;
-//    new_d = (im*vec4(d, 0.0)).xyz;
-//    if (intersectCube(new_near, new_normal, new_p, new_d)) {
-//        did = true;
-//        if (new_near < near) {
-//            normal = (m*vec4(new_normal, 0.0)).xyz;
-//            near = new_near;
-//        }
-//    }
-
-    // Cam 1
-    m = mat4(1.0);
-    im = mat4(1.0);
-
+bool cam1(inout float near, out vec3 normal, mat4 m, mat4 im, vec3 p, vec3 d) {
     doRotateY(m, im, 0.5);//0.2*iTime);
     // Axle position
     doTranslate(m, im, vec3(0.0, -0.6, 0.0));
@@ -226,15 +165,31 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
     // Cam position along axle
     doTranslate(m, im, vec3(0.0, 0.0, 0.6));
     doScale(m, im, 0.15, 0.2, 0.02);
-    new_p = (im*vec4(p, 1.0)).xyz;
-    new_d = (im*vec4(d, 0.0)).xyz;
+    vec3 new_p = (im*vec4(p, 1.0)).xyz;
+    vec3 new_d = (im*vec4(d, 0.0)).xyz;
+    vec3 new_normal;
+    float new_near;
     if (intersectCylinder(new_near, new_normal, new_p, new_d)) {
-        did = true;
         if (new_near < near) {
             normal = (m*vec4(new_normal, 0.0)).xyz;
             near = new_near;
         }
+        return true;
+    } else {
+        return false;
     }
+}
+
+bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug) {
+    bool did = false;
+    near = 1e8;
+
+    mat4 m = mat4(1.0), im = mat4(1.0);
+
+    vec3 new_d, new_p, new_normal;
+    float new_near;
+
+    did = did || cam1(near, normal, m, im, p, d);
 
     // Cam 2
     m = mat4(1.0);
