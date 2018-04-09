@@ -208,6 +208,28 @@ bool cam2(inout float near, out vec3 normal, mat4 m, mat4 im, vec3 p, vec3 d) {
     }
 }
 
+bool piston1(inout float near, out vec3 normal, mat4 m, mat4 im, vec3 p, vec3 d) {
+    doRotateY(m, im, 0.5);//0.2*iTime);
+    // Axle position
+    doTranslate(m, im, vec3(0.0, -0.6, 0.0));
+    // Cam position along axle
+    doTranslate(m, im, vec3(0.6, 0.10+0.21*0.5*(1.0+sin(1.0*iTime+0.5*pi)), 0.0));
+    doRotateX(m, im, 0.5*pi);
+    doScale(m, im, 0.1, 0.1, 0.02);
+    vec3 new_p = (im*vec4(p, 1.0)).xyz;
+    vec3 new_d = (im*vec4(d, 0.0)).xyz;
+    vec3 new_normal;
+    float new_near;
+    if (intersectCylinder(new_near, new_normal, new_p, new_d)) {
+        if (new_near < near) {
+            normal = (m*vec4(new_normal, 0.0)).xyz;
+            near = new_near;
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
 
 bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug) {
     bool did = false;
@@ -220,27 +242,7 @@ bool intersectScene(out float near, out vec3 normal, vec3 p, vec3 d, bool debug)
 
     did = did || cam1(near, normal, m, im, p, d);
     did = did || cam2(near, normal, m, im, p, d);
-
-    // Piston 1
-    m = mat4(1.0);
-    im = mat4(1.0);
-
-    doRotateY(m, im, 0.5);//0.2*iTime);
-    // Axle position
-    doTranslate(m, im, vec3(0.0, -0.6, 0.0));
-    // Cam position along axle
-    doTranslate(m, im, vec3(0.6, 0.10+0.21*0.5*(1.0+sin(1.0*iTime+0.5*pi)), 0.0));
-    doRotateX(m, im, 0.5*pi);
-    doScale(m, im, 0.1, 0.1, 0.02);
-    new_p = (im*vec4(p, 1.0)).xyz;
-    new_d = (im*vec4(d, 0.0)).xyz;
-    if (intersectCylinder(new_near, new_normal, new_p, new_d)) {
-        did = true;
-        if (new_near < near) {
-            normal = (m*vec4(new_normal, 0.0)).xyz;
-            near = new_near;
-        }
-    }
+    did = did || piston1(near, normal, m, im, p, d);
 
     // Piston 2
     m = mat4(1.0);
