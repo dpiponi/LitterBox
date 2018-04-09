@@ -35,7 +35,7 @@ float integrate(vec2 xy) {
     int n = 300;
     vec2 last_p = path(0.0);
 
-    float wavelength = 0.01+0.1*iMouse.x/iResolution.x;
+    float wavelength = 0.01;//+0.1*iMouse.x/iResolution.x;
 
     for (int i = 0; i < n; ++i) {
         float t = float(i)/float(n);
