@@ -110,7 +110,7 @@ vec4 reflect(vec3 n, vec3 p, vec4 x) {
 
 float g(vec3 x) {
     //return length(x)-0.9;
-    return max(x.z,max(-x.z,max(x.y,max(-x.y,max(x.x, -x.x)))))-0.9;
+    return max(x.z,max(-x.z,max(x.y,max(-x.y,max(x.x, -x.x)))))-1.25;
 }
 
 #if 0
@@ -144,23 +144,28 @@ vec3 dodecafold(vec3 x) {
 
 vec4 f(vec3 x0) {
     vec4 x = vec4(x0, 0.0);
-    x = reflect(vec3(1.0, 0.0, 1.00), vec3(-4.3, 8.00, -19.01), x);
-    x = reflect(vec3(0.0, 1.0, 1.00), vec3(4.3, -8.00, 1.01), x);
-    x = reflect(vec3(1.0, 0.0, 0.00), vec3(-4.3, 0.00, 1.01), x);
-    x = reflect(vec3(0.0, -2.0, 0.00), vec3(1.3, 1.00, 2.01), x);
-    x = reflect(vec3(0.0, -1.0, 1.00), vec3(3.3, 1.01, -1.01), x);
-    x = reflect(vec3(1.01, 0.0, 1.0), vec3(-1.01, 1.2, -3.01), x);
-    x = reflect(vec3(0.0, 1.00, 1.0), vec3(0.0, -2.0, -7.0), x);
-    x = reflect(vec3(1.0, 0.0, 1.0), vec3(0.01, -1.0, -1.0), x);
-    x = reflect(vec3(1.0, 1.0, 0.0), vec3(-3.0, 1.0, 4.0), x);
+    x = reflect(vec3(1.0, 0.0, -1.00), vec3(-3.0, 5.00, 10.00), x);
+    x = reflect(vec3(0.0, 1.0, -1.00), vec3(-2.0, 6.00, 8.00), x);
+    x = reflect(vec3(1.0, -1.0, 0.00), vec3(-4.0, 21.00, -7.00), x);
+    x = reflect(vec3(1.0, 0.0, 0.00), vec3(-4.0, 12.00, -9.00), x);
+    x = reflect(vec3(0.0, 0.0, 1.00), vec3(4.0, 10.00, -8.00), x);
+    x = reflect(vec3(1.0, 0.0, 1.00), vec3(-1.0, 8.00, -2.00), x);
+    x = reflect(vec3(0.0, 1.0, 1.00), vec3(8.0, -10.00, 4.00), x);
+    x = reflect(vec3(1.0, -1.0, 0.00), vec3(-6.0, 4.00, 1.00), x);
+    x = reflect(vec3(0.0, -1.0, 0.00), vec3(2.0, 1.00, 3.00), x);
+    x = reflect(vec3(0.0, -1.0, 1.00), vec3(4.0, 0.00, 0.00), x);
+    x = reflect(vec3(1.00, 0.0, 1.0), vec3(-2.00, 5.0, -6.00), x);
+    x = reflect(vec3(0.0, 1.00, 1.0), vec3(1.0, -4.0, -4.0), x);
+    x = reflect(vec3(1.0, 1.0, 0.0), vec3(-5.00, -1.0, -1.0), x);
+    x = reflect(vec3(1.0, -1.0, 0.0), vec3(-7.0, -4.0, 7.0), x);
     x = reflect(vec3(-1.0, 1.0, 0.0), vec3(0.0, -3.0, 2.0), x);
-    x = reflect(vec3(-1.0, 0.0, 1.0), vec3(7.0, -5.0, 4.01), x);
-    x = reflect(vec3(-1.0, 1.0, 0.0), vec3(1.0, 0.0, -2.0), x);
-    x = reflect(vec3(1.0, 0.0, 0.0), vec3(-1.0, -2.0, 0.0), x);
-    x = reflect(vec3(0.0, 1.0, 0.0), vec3(1.0, -3.0, -1.0), x);
-    x = reflect(vec3(0.0, 1.0, 1.0), vec3(1.0, -4.0, -1.0), x);
-    x = reflect(vec3(0.0, -1.0, 1.0), vec3(1.0, 2.0, 0.0), x);
-    x = reflect(vec3(1.0, 1.0, 0.0), vec3(-4.0, 0.0, -1.0), x);
+    x = reflect(vec3(-1.0, 0.0, 1.0), vec3(7.0, -5.0, 4.00), x);
+    x = reflect(vec3(-1.0, 1.0, 0.0), vec3(1.0, -0.0, -2.0), x);
+    x = reflect(vec3(1.0, 1.0, 0.0), vec3(6.0, -8.0, 0.0), x);
+    x = reflect(vec3(0.0, 1.0, 0.0), vec3(-1.0, -4.0, -1.0), x);
+    x = reflect(vec3(0.0, 1.0, 1.0), vec3(1.0, -5.0, -3.0), x);
+    x = reflect(vec3(0.0, -1.0, 1.0), vec3(1.0, 3.0, 0.0), x);
+    x = reflect(vec3(1.0, 1.0, 0.0), vec3(-1.0, -2.0, -2.0), x);
 
     return vec4(x.xyz, g(x.xyz));
 }
@@ -214,7 +219,7 @@ vec3 march(vec3 p, vec3 d) {
             mat4 m = view();
             vec3 light = (vec4(1.0,1.0,-1.0,1.0)*m).xyz;
             float l0 = 0.25+0.75*max(dot(n, light)/sqrt(3.0), 0.0);
-            float l1 = 0.5*lighting(p, n);
+            float l1 = 0.75*lighting(p, n);
             float s = concrete(0.5*p);
             return 2.5*s*(0.1+0.7*l0+0.7*l1)*vec3(0.74, 0.72, 0.7);
         }
@@ -244,7 +249,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     uv = 2.0*uv/iResolution.y;
     xy = iMouse.xy/iResolution.xy;
 
-    vec3 p = vec3(0.0, 0.0, -20.8);
+    vec3 p = vec3(0.0, 0.0, -40.8);
     vec3 d = normalize(vec3(0.5*uv, 1.0));
     mat4 m = view();
     p = (vec4(p, 1.0)*m).xyz;
