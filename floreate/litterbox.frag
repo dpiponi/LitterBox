@@ -81,17 +81,17 @@ float f(vec3 x) {
     x = dodecafold(x);
 
     x = (vec4(x,1.0)*rotateZ(0.478*theTime-9.128)*rotateY(0.13001*theTime+1.234)*scale(vec3(1.0, 1.0, 1.0))).xyz;
-    x = x+vec3(0.0, -0.4, 0.1);
+    x = x+vec3(0.0, -0.2, 0.1);
 
     x = dodecafold(x);
 
-    x = (vec4(x,1.0)*rotateZ(0.07*theTime-3.128)*rotateY(0.1*theTime+1.234)*scale(vec3(1.0, 1.0, 1.0))).xyz;
+    x = (vec4(x,1.0)*rotateZ(0.17*theTime-3.128)*rotateY(0.1*theTime+1.234)*scale(vec3(1.0, 1.0, 1.0))).xyz;
     x = x+vec3(0.0, 0, 0.3);
 
     x = dodecafold(x);
 
     x = (vec4(x,1.0)*rotateZ(0.27*theTime-3.999)*rotateY(0.121*theTime+7.034)*scale(vec3(1.0, 1.0, 1.0))).xyz;
-    x = x+vec3(0.1, 0.3, 0.0);
+    x = x+vec3(0.0, 0.2, 0.0);
 
     x = dodecafold(x);
 
@@ -101,7 +101,7 @@ float f(vec3 x) {
     x = dodecafold(x);
 
     x = (vec4(x,1.0)*rotateZ(0.91*theTime-3.128)*rotateY(0.0901*theTime+1.034)*scale(vec3(1.0, 1.0, 1.0))).xyz;
-    x = x+vec3(0.25, 0.3, 0.0);
+    x = x+vec3(0.13, 0.34, 0.0);
     
     x = dodecafold(x);
 
