@@ -1,3 +1,5 @@
+vec3 target;
+
 float hash(vec3 p)  // replace this by something better
 {
     p  = fract( p*0.3183099+.1 );
@@ -108,9 +110,13 @@ vec4 reflect(vec3 n, vec3 p, vec4 x) {
     return nn;
 }
 
-float g(vec3 x) {
+float cube(vec3 x) {
     //return length(x)-0.9;
     return max(x.z,max(-x.z,max(x.y,max(-x.y,max(x.x, -x.x)))))-1.25;
+}
+
+float sphere(vec3 x) {
+    return length(x)-0.25;
 }
 
 #if 0
@@ -142,12 +148,76 @@ vec3 dodecafold(vec3 x) {
     return x;
 }
 
-vec4 f(vec3 x0) {
+#define N 25
+vec3 path(float t) {
+    vec3 pos[N];
+    pos[0] = vec3(-3.75, -3.2, -18.0);
+    pos[1] = vec3(-4.0, -2.5, -14.0);
+    pos[2] = vec3(-5.0, 0.0, -10.0);
+    pos[3] = vec3(-3.0, 0.0, -9.0);
+    pos[4] = vec3(-4.0, 0.0, -10.0);
+    pos[5] = vec3(-10.0, 1.0, -8.0);
+    pos[6] = vec3(-10.0, 0.0, -5.0);
+    pos[7] = vec3(-10.0, 3.1, -2.0);
+    pos[8] = vec3(-9.0, 5.0, 0.0);
+    pos[9] = vec3(-7.0, 5.0, 0.0);
+    pos[10] = vec3(-6.0, 6.0, -2.0);
+    pos[11] = vec3(-3.5, 8.1, -8.0);
+    pos[12] = vec3(-5.6, 5.0, -8.0);
+    pos[13] = vec3(-8.4, 4.5, -5.0);
+    pos[14] = vec3(-3.3, 7.2, -8.2);
+    pos[15] = vec3(-4.7, 6.4, -7.0);
+    pos[16] = vec3(-2.5, 4.2, -12.0);
+    pos[17] = vec3(-2.5, 1.0, -22.0);
+    pos[18] = vec3(-4.5, -2.0, -16.0);
+    pos[19] = vec3(-4.5, -2.0, -17.0);
+    pos[20] = vec3(-4.3, -3.5, -17.0);
+    pos[21] = vec3(-4.0, -5.75, -16.0);
+    pos[22] = vec3(-4.5, -7.0, -15.0);
+    pos[23] = vec3(-5.5, -8.0, -14.0);
+    pos[24] = vec3(-6.5, -6.6, -13.0);
+
+    int it = int(floor(t));
+    while (it >= N) {
+        it -= N;
+    }
+    float ft = fract(t);
+    vec3 qos0 = pos[it];
+    ++it;
+    if (it >= N) {
+        it = 0;
+    }
+    vec3 qos1 = pos[it];
+    ++it;
+    if (it >= N) {
+        it = 0;
+    }
+    vec3 qos2 = pos[it];
+    ++it;
+    if (it >= N) {
+        it = 0;
+    }
+    vec3 qos3 = pos[it];
+    vec3 pos0 = 2*qos1;
+    vec3 pos1 = -0.333333*qos0+2.0*qos1+0.333333*qos2;
+    vec3 pos2 = 0.333333*qos1+2.0*qos2-0.333333*qos3;
+    vec3 pos3 = 2*qos2;
+    pos0 = mix(pos0, pos1, ft);
+    pos1 = mix(pos1, pos2, ft);
+    pos2 = mix(pos2, pos3, ft);
+    pos0 = mix(pos0, pos1, ft);
+    pos1 = mix(pos1, pos2, ft);
+    pos0 = mix(pos0, pos1, ft);
+    return pos0;
+}
+
+vec4 scene(vec3 x0) {
     vec4 x = vec4(x0, 0.0);
-    x = reflect(vec3(1.0, 0.0, -1.00), vec3(-3.0, 5.00, 10.00), x);
+    x = reflect(vec3(0.0, 1.0, 1.00), vec3(5.0, 5.00, -11.00), x);
+    x = reflect(vec3(1.0, 0.0, -1.00), vec3(-3.0, 5.00, 11.00), x);
     x = reflect(vec3(0.0, 1.0, -1.00), vec3(-2.0, 6.00, 8.00), x);
-    x = reflect(vec3(1.0, -1.0, 0.00), vec3(-4.0, 21.00, -7.00), x);
-    x = reflect(vec3(1.0, 0.0, 0.00), vec3(-4.0, 12.00, -9.00), x);
+    x = reflect(vec3(1.0, -1.0, 0.00), vec3(-4.0, 21.00, -8.00), x);
+    x = reflect(vec3(1.0, 0.0, 0.00), vec3(-4.0, 12.00, -10.00), x);
     x = reflect(vec3(0.0, 0.0, 1.00), vec3(4.0, 10.00, -8.00), x);
     x = reflect(vec3(1.0, 0.0, 1.00), vec3(-1.0, 8.00, -2.00), x);
     x = reflect(vec3(0.0, 1.0, 1.00), vec3(8.0, -10.00, 4.00), x);
@@ -157,17 +227,25 @@ vec4 f(vec3 x0) {
     x = reflect(vec3(1.00, 0.0, 1.0), vec3(-2.00, 5.0, -6.00), x);
     x = reflect(vec3(0.0, 1.00, 1.0), vec3(1.0, -4.0, -4.0), x);
     x = reflect(vec3(1.0, 1.0, 0.0), vec3(-5.00, -1.0, -1.0), x);
-    x = reflect(vec3(1.0, -1.0, 0.0), vec3(-7.0, -4.0, 7.0), x);
+    x = reflect(vec3(1.0, -1.0, 0.0), vec3(-7.0, -4.0, 8.0), x);
     x = reflect(vec3(-1.0, 1.0, 0.0), vec3(0.0, -3.0, 2.0), x);
     x = reflect(vec3(-1.0, 0.0, 1.0), vec3(7.0, -5.0, 4.00), x);
     x = reflect(vec3(-1.0, 1.0, 0.0), vec3(1.0, -0.0, -2.0), x);
     x = reflect(vec3(1.0, 1.0, 0.0), vec3(6.0, -8.0, 0.0), x);
     x = reflect(vec3(0.0, 1.0, 0.0), vec3(-1.0, -4.0, -1.0), x);
     x = reflect(vec3(0.0, 1.0, 1.0), vec3(1.0, -5.0, -3.0), x);
-    x = reflect(vec3(0.0, -1.0, 1.0), vec3(1.0, 3.0, 0.0), x);
-    x = reflect(vec3(1.0, 1.0, 0.0), vec3(-1.0, -2.0, -2.0), x);
+    x = reflect(vec3(0.0, -1.0, 1.0), vec3(2.0, 3.0, 0.0), x);
+    x = reflect(vec3(1.0, 0.0, 1.0), vec3(1.0, -5.0, -3.0), x);
+    //x = rotateZ(0.25*theTime)*x;
+    //x = rotateY(0.5*theTime)*x;
 
-    return vec4(x.xyz, g(x.xyz));
+//    float d = cube(x.xyz);
+//    for (int i = 0; i < 5; ++i) {
+//        d = min(d, sphere(x0-path(theTime+0.5+0.5*i)));
+//    }
+//    return vec4(x.xyz, d);
+    return vec4(x.xyz, min(cube(x.xyz), sphere(x0-target)));
+    //return vec4(x.xyz, sphere(x0-target));
 }
 
 float eps = 0.0001;
@@ -185,35 +263,35 @@ vec3 ico[12];
 float lighting(vec3 x, vec3 n) {
     float t = 0.0;
     for (int i = 0; i < 12; ++i) {
-        //float p = f(x-0.05*n+0.10*ico[i]);
+        //float p = scene(x-0.05*n+0.10*ico[i]);
         //t += 0.8+10.0*p;
-        float p = f(x+1.0*n+2.0*ico[i]).w;
+        float p = scene(x+1.0*n+2.0*ico[i]).w;
         t += 0.5*p;
     }
     return t/12.0-0.5;
 }
 
 mat4 view() {
-    return rotateY(0.2*theTime)*rotateX(0.00*theTime);
+    return rotateY(0.25*theTime)*rotateX(0.00*theTime);
 }
 
 vec3 march(vec3 p, vec3 d) {
     float c;
-    c = f(p).w;
+    c = scene(p).w;
     if (c < 0.0) {
         return vec3(0.0, 0.0, 0.0);
     }
-    for (int i = 0; i < 70; ++i) {
-        float step = max(0.001, c);
+    for (int i = 0; i < 100; ++i) {
+        float step = max(0.004, c);
         p = p+step*d;
-        vec4 ff = f(p);
+        vec4 ff = scene(p);
         vec3 x = ff.xyz;
         c = ff.w;
         if (c <= 0.0) {
             float ex, ey, ez;
-            ex = f(p+vec3(eps, 0.0, 0.0)).w;
-            ey = f(p+vec3(0.0, eps, 0.0)).w;
-            ez = f(p+vec3(0.0, 0.0, eps)).w;
+            ex = scene(p+vec3(eps, 0.0, 0.0)).w;
+            ey = scene(p+vec3(0.0, eps, 0.0)).w;
+            ez = scene(p+vec3(0.0, 0.0, eps)).w;
             vec3 n = vec3(ex-c, ey-c, ez-c)/eps;
             n = normalize(n);
             mat4 m = view();
@@ -221,16 +299,22 @@ vec3 march(vec3 p, vec3 d) {
             float l0 = 0.25+0.75*max(dot(n, light)/sqrt(3.0), 0.0);
             float l1 = 0.75*lighting(p, n);
             float s = concrete(0.5*p);
-            return 2.5*s*(0.1+0.7*l0+0.7*l1)*vec3(0.74, 0.72, 0.7);
+            //return 2.5*s*(0.1+0.7*l0+0.7*l1)*vec3(0.74, 0.72, 0.7);
+            return 1.1*s*(0.3+0.5*l0+0.7*l1)*vec3(1.61, 1.25, 0.96);
         }
     }
     return vec3(0.1, 0.1, 0.1);
 }
 
+mat3 complete(vec3 y, vec3 z) {
+    vec3 x = normalize(cross(y, z));
+    y = normalize(cross(z, x));
+    return mat3(x, y, z);
+}
+
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
-    theTime = 0.5*iTime+40.0;
+    theTime = 0.5*iTime;
     pc = normalize(pc);
-    //theTime = 0.0;//iMouse.x;
 
     ico[0] = vec3(-0.26286500, 0.0000000, 0.42532500);
     ico[1] = vec3(0.26286500, 0.0000000, 0.42532500);
@@ -249,11 +333,19 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     uv = 2.0*uv/iResolution.y;
     xy = iMouse.xy/iResolution.xy;
 
-    vec3 p = vec3(0.0, 0.0, -40.8);
+//    theTime = N*xy.x;
+//    theTime = 10.95;
+//    theTime = 17+mod(theTime, 4.0);
+
+    vec3 p = path(theTime);//ec3(-4.0, 0.0, -41.0);
+    vec3 z = normalize(path(theTime+0.2)-p);
+    mat3 m = complete(vec3(0.0, 1.0, 0.0), z);
     vec3 d = normalize(vec3(0.5*uv, 1.0));
-    mat4 m = view();
-    p = (vec4(p, 1.0)*m).xyz;
-    d = (vec4(d, 1.0)*m).xyz;
+    target = path(theTime+0.5);
+    d = m*d;
+    //mat4 m = view();
+    //p = (m*vec4(p, 1.0)).xyz;
+    //d = (m*vec4(d, 1.0)).xyz;
     vec3 color = march(p, d);
     fragColor = vec4(color, 1.0);
 }
