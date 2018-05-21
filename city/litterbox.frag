@@ -299,6 +299,7 @@ vec3 march(vec3 p, vec3 d) {
             float l0 = 0.25+0.75*max(dot(n, light)/sqrt(3.0), 0.0);
             float l1 = 0.75*lighting(p, n);
             float s = concrete(0.5*p);
+            s *= 1.0+1.0/length(p-target);
             //return 2.5*s*(0.1+0.7*l0+0.7*l1)*vec3(0.74, 0.72, 0.7);
             return 1.1*s*(0.3+0.5*l0+0.7*l1)*vec3(1.61, 1.25, 0.96);
         }
